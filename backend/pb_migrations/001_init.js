@@ -14,21 +14,17 @@ migrate((app) => {
   users.createRule = "";
   users.updateRule = "id = @request.auth.id";
   users.deleteRule = null;
+  app.save(users);
 
-  // Add role field (find existing or append)
-  const existingFields = users.fields || [];
-  const hasRole = existingFields.some(f => f.name === "role");
-  if (!hasRole) {
-    existingFields.push({
-      name: "role",
-      type: "select",
-      values: ["user", "admin"],
-      maxSelect: 1,
-      required: false,
-    });
-    users.fields = existingFields;
-  }
-
+  // Add role field using fields.add()
+  users = app.findCollectionByNameOrId("users");
+  const roleField = new Field({
+    name: "role",
+    type: "select",
+    values: ["user", "admin"],
+    maxSelect: 1,
+  });
+  users.fields.add(roleField);
   app.save(users);
 
   // ── Create inquiries collection ──
@@ -41,38 +37,11 @@ migrate((app) => {
     updateRule: '@request.auth.role = "admin"',
     deleteRule: '@request.auth.id = user || @request.auth.role = "admin"',
     fields: [
-      {
-        name: "file",
-        type: "file",
-        required: true,
-        maxSelect: 1,
-        maxSize: 52428800,
-      },
-      {
-        name: "filename",
-        type: "text",
-        required: true,
-        max: 500,
-      },
-      {
-        name: "user",
-        type: "relation",
-        required: true,
-        collectionId: "_pb_users_auth_",
-        maxSelect: 1,
-        cascadeDelete: false,
-      },
-      {
-        name: "status",
-        type: "select",
-        values: ["pending", "in_review", "reviewed", "rejected"],
-        maxSelect: 1,
-      },
-      {
-        name: "notes",
-        type: "text",
-        max: 5000,
-      },
+      { name: "file", type: "file", required: true, maxSelect: 1, maxSize: 52428800 },
+      { name: "filename", type: "text", required: true, max: 500 },
+      { name: "user", type: "relation", required: true, collectionId: "_pb_users_auth_", maxSelect: 1, cascadeDelete: false },
+      { name: "status", type: "select", values: ["pending", "in_review", "reviewed", "rejected"], maxSelect: 1 },
+      { name: "notes", type: "text", max: 5000 },
       { name: "created", type: "autodate", onCreate: true, onUpdate: false },
       { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
     ],
