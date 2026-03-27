@@ -1,1 +1,6 @@
 pb_data/
+pocketbase
+node_modules/
+frontend/dist/
+*.local
+.DS_Store

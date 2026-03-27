@@ -1,15 +1,26 @@
-FROM alpine:3.20
-
-RUN apk add --no-cache ca-certificates
-
+FROM node:20-alpine AS frontend
 WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
 
-COPY pocketbase /app/pocketbase
-COPY pb_public /app/pb_public
-COPY pb_migrations /app/pb_migrations
+FROM alpine:3 AS downloader
+ARG PB_VERSION=0.36.7
+ARG TARGETARCH=amd64
+RUN apk add --no-cache wget unzip \
+    && wget -q "https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${TARGETARCH}.zip" -O /tmp/pb.zip \
+    && unzip /tmp/pb.zip -d /usr/local/bin/ \
+    && rm /tmp/pb.zip
 
-RUN chmod +x /app/pocketbase
-
+FROM alpine:3
+RUN apk add --no-cache ca-certificates tzdata
+COPY --from=downloader /usr/local/bin/pocketbase /usr/local/bin/pocketbase
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+COPY --from=frontend /app/dist /pb_public
+COPY backend/pb_migrations /pb_migrations
+COPY backend/pb_hooks /pb_hooks
 EXPOSE 8090
-
-CMD ["/app/pocketbase", "serve", "--http=0.0.0.0:8090"]
+VOLUME /pb_data
+ENTRYPOINT ["/entrypoint.sh"]
