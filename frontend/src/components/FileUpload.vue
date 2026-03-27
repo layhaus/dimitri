@@ -33,8 +33,9 @@ function onFileSelect(e: Event) {
 
 function validateAndEmit(file: File) {
   const ext = file.name.split('.').pop()?.toLowerCase()
-  if (ext !== 'step' && ext !== 'stp') {
-    alert('Please upload a STEP file (.step or .stp)')
+  const validExts = ['step', 'stp']
+  if (!ext || !validExts.includes(ext)) {
+    alert(`"${file.name}" is not a STEP file. Please upload a .step or .stp file.`)
     return
   }
   emit('upload', file)
@@ -62,7 +63,7 @@ function validateAndEmit(file: File) {
     <input
       ref="fileInput"
       type="file"
-      accept=".step,.stp"
+      accept=".step,.stp,.STEP,.STP,application/octet-stream"
       class="file-upload__input"
       @change="onFileSelect"
     />
