@@ -22,5 +22,4 @@ COPY --from=frontend /app/dist /pb_public
 COPY backend/pb_migrations /pb_migrations
 COPY backend/pb_hooks /pb_hooks
 EXPOSE 8090
-VOLUME /pb_data
 ENTRYPOINT ["/entrypoint.sh"]
