@@ -2,5 +2,6 @@ pb_data/
 pocketbase
 node_modules/
 frontend/dist/
+frontend/public/*.wasm
 *.local
 .DS_Store

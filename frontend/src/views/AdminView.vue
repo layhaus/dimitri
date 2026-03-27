@@ -8,6 +8,7 @@ const router = useRouter()
 const { inquiries, loading, loadAllInquiries } = useInquiries()
 
 const activeFilter = ref('all')
+const error = ref('')
 const filters = [
   { key: 'all', label: 'All' },
   { key: 'pending', label: 'Pending' },
@@ -16,13 +17,21 @@ const filters = [
   { key: 'rejected', label: 'Rejected' },
 ]
 
-function setFilter(key: string) {
+async function setFilter(key: string) {
   activeFilter.value = key
-  loadAllInquiries(key)
+  try {
+    await loadAllInquiries(key)
+  } catch (err: unknown) {
+    error.value = (err as Error).message || 'Failed to load inquiries'
+  }
 }
 
-onMounted(() => {
-  loadAllInquiries()
+onMounted(async () => {
+  try {
+    await loadAllInquiries()
+  } catch (err: unknown) {
+    error.value = (err as Error).message || 'Failed to load inquiries'
+  }
 })
 </script>
 

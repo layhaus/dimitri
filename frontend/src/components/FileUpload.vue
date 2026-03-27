@@ -38,6 +38,11 @@ function validateAndEmit(file: File) {
     alert(`"${file.name}" is not a STEP file. Please upload a .step or .stp file.`)
     return
   }
+  const maxSize = 50 * 1024 * 1024
+  if (file.size > maxSize) {
+    alert(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum size is 50 MB.`)
+    return
+  }
   emit('upload', file)
 }
 </script>

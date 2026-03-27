@@ -46,10 +46,13 @@ export function useInquiries() {
   }
 
   async function createInquiry(file: File) {
+    if (!pb.authStore.record) {
+      throw new Error('Not authenticated')
+    }
     const formData = new FormData()
     formData.append('file', file)
     formData.append('filename', file.name)
-    formData.append('user', pb.authStore.record!.id)
+    formData.append('user', pb.authStore.record.id)
     formData.append('status', 'pending')
     return await pb.collection('inquiries').create(formData)
   }

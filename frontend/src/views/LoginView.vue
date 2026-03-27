@@ -30,7 +30,7 @@ async function handleSubmit() {
       await login(email.value, password.value)
     }
     const redirect = (route.query.redirect as string) || '/'
-    router.push(redirect)
+    router.push(redirect.startsWith('/') || redirect.startsWith('#') ? redirect : '/')
   } catch (err: unknown) {
     const e = err as { response?: { data?: Record<string, { message: string }> }; message?: string }
     if (e.response?.data) {

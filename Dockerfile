@@ -3,7 +3,7 @@ WORKDIR /app
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
-RUN npm run build
+RUN cp node_modules/occt-import-js/dist/occt-import-js.wasm public/ && npm run build
 
 FROM alpine:3 AS downloader
 ARG PB_VERSION=0.36.7

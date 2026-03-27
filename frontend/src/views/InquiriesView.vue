@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useInquiries } from '../composables/useInquiries'
 import InquiryCard from '../components/InquiryCard.vue'
 
 const router = useRouter()
 const { inquiries, loading, loadMyInquiries } = useInquiries()
+const error = ref('')
 
-onMounted(() => {
-  loadMyInquiries()
+onMounted(async () => {
+  try {
+    await loadMyInquiries()
+  } catch (err: unknown) {
+    error.value = (err as Error).message || 'Failed to load inquiries'
+  }
 })
 </script>
 
@@ -28,7 +33,9 @@ onMounted(() => {
       </RouterLink>
     </div>
 
-    <div v-if="loading" class="inquiries-view__loading">
+    <div v-if="error" class="inquiries-view__error body-md">{{ error }}</div>
+
+    <div v-else-if="loading" class="inquiries-view__loading">
       <span class="label-sm">Loading inquiries...</span>
     </div>
 
@@ -84,6 +91,14 @@ onMounted(() => {
 .btn-upload:hover {
   opacity: 0.9;
   text-decoration: none;
+}
+
+.inquiries-view__error {
+  background: rgba(255, 84, 73, 0.08);
+  color: var(--error);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-6);
 }
 
 .inquiries-view__loading {

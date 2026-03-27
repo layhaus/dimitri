@@ -39,6 +39,8 @@ async function handleSave() {
   try {
     await updateInquiry(inquiry.value.id, editStatus.value, editNotes.value)
     inquiry.value = await getInquiry(inquiry.value.id)
+    editStatus.value = inquiry.value.status || 'pending'
+    editNotes.value = inquiry.value.notes || ''
   } catch (err: unknown) {
     const e = err as { message?: string }
     error.value = e.message || 'Failed to save'
