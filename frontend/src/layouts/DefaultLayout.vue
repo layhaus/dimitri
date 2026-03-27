@@ -232,7 +232,16 @@ function handleLogout() {
     flex-direction: row;
     overflow-x: auto;
   }
+  .sidebar__brand {
+    padding: 0 var(--space-4);
+  }
   .sidebar__footer {
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .sidebar__user {
     display: none;
   }
   .main-content {

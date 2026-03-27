@@ -17,8 +17,13 @@ async function handleUpload(file: File) {
     await createInquiry(file)
     router.push({ name: 'inquiries' })
   } catch (err: unknown) {
-    const e = err as { message?: string }
-    error.value = e.message || 'Upload failed'
+    const e = err as { message?: string; response?: { data?: Record<string, { message: string }> } }
+    if (e.response?.data) {
+      error.value = Object.values(e.response.data).map(v => v.message).join('. ')
+    } else {
+      error.value = e.message || 'Upload failed'
+    }
+    console.error('Upload error:', err)
   } finally {
     uploading.value = false
   }
