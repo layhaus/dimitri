@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import { useInquiries } from '../composables/useInquiries'
 import StatusBadge from '../components/StatusBadge.vue'
+import StepViewer from '../components/StepViewer.vue'
 import type { RecordModel } from 'pocketbase'
 
 const route = useRoute()
@@ -115,6 +116,12 @@ function formatDate(dateStr: string): string {
           </svg>
           Download
         </a>
+      </div>
+
+      <!-- 3D Model Viewer -->
+      <div class="detail__viewer-section">
+        <h2 class="title-md" style="margin-bottom: var(--space-4)">3D Preview</h2>
+        <StepViewer :file-url="getFileUrl(inquiry)" />
       </div>
 
       <!-- Admin review section -->
@@ -372,6 +379,10 @@ function formatDate(dateStr: string): string {
 }
 
 .btn-delete:hover { opacity: 0.7; }
+
+.detail__viewer-section {
+  margin-bottom: var(--space-8);
+}
 
 .detail__notes {
   background: var(--surface-container-low);
