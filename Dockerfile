@@ -18,4 +18,5 @@ RUN apk add --no-cache ca-certificates tzdata
 COPY --from=backend /dimitri /usr/local/bin/dimitri
 COPY --from=frontend /app/dist /pb_public
 EXPOSE 8090
+ENV PB_PUBLIC_DIR=/pb_public
 CMD ["dimitri", "serve", "--http=0.0.0.0:8090"]
