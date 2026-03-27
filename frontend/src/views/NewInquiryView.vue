@@ -21,7 +21,7 @@ async function handleUpload(file: File) {
     if (e.response?.data) {
       error.value = Object.values(e.response.data).map(v => v.message).join('. ')
     } else {
-      error.value = e.message || 'Upload failed'
+      error.value = e.message || 'Upload fehlgeschlagen'
     }
     console.error('Upload error:', err)
   } finally {
@@ -33,8 +33,8 @@ async function handleUpload(file: File) {
 <template>
   <div class="new-inquiry">
     <div class="new-inquiry__header">
-      <h1 class="headline-lg">Upload STEP File</h1>
-      <p class="body-md new-inquiry__subtitle">Submit a 3D model for manufacturing inquiry</p>
+      <h1 class="headline-lg">STEP-Datei hochladen</h1>
+      <p class="body-md new-inquiry__subtitle">3D-Modell für eine Fertigungsanfrage einreichen</p>
     </div>
 
     <div v-if="error" class="new-inquiry__error body-md">{{ error }}</div>
@@ -43,23 +43,23 @@ async function handleUpload(file: File) {
       <div class="upload-progress">
         <div class="upload-progress__bar"></div>
       </div>
-      <span class="label-sm">Uploading file...</span>
+      <span class="label-sm">Datei wird hochgeladen...</span>
     </div>
 
     <FileUpload v-else @upload="handleUpload" />
 
     <div class="new-inquiry__info">
       <div class="info-card">
-        <span class="label-sm">Supported Formats</span>
+        <span class="label-sm">Unterstützte Formate</span>
         <p class="title-md">.STEP / .STP</p>
       </div>
       <div class="info-card">
-        <span class="label-sm">Max File Size</span>
+        <span class="label-sm">Max. Dateigröße</span>
         <p class="title-md">50 MB</p>
       </div>
       <div class="info-card">
-        <span class="label-sm">Processing</span>
-        <p class="title-md">Instant</p>
+        <span class="label-sm">Verarbeitung</span>
+        <p class="title-md">Sofort</p>
       </div>
     </div>
   </div>

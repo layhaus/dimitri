@@ -35,12 +35,12 @@ function validateAndEmit(file: File) {
   const ext = file.name.split('.').pop()?.toLowerCase()
   const validExts = ['step', 'stp']
   if (!ext || !validExts.includes(ext)) {
-    alert(`"${file.name}" is not a STEP file. Please upload a .step or .stp file.`)
+    alert(`"${file.name}" ist keine STEP-Datei. Bitte eine .step oder .stp Datei hochladen.`)
     return
   }
   const maxSize = 50 * 1024 * 1024
   if (file.size > maxSize) {
-    alert(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum size is 50 MB.`)
+    alert(`Datei zu groß (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximale Größe ist 50 MB.`)
     return
   }
   emit('upload', file)
@@ -63,8 +63,8 @@ function validateAndEmit(file: File) {
         <line x1="12" y1="3" x2="12" y2="15"/>
       </svg>
     </div>
-    <p class="file-upload__text">Drop your STEP file here</p>
-    <p class="file-upload__hint">or click to browse &middot; .step, .stp &middot; max 50 MB</p>
+    <p class="file-upload__text">STEP-Datei hier ablegen</p>
+    <p class="file-upload__hint">oder klicken zum Durchsuchen &middot; .step, .stp &middot; max. 50 MB</p>
     <input
       ref="fileInput"
       type="file"

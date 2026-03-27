@@ -30,7 +30,7 @@ function handleLogout() {
             <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
             <polyline points="13 2 13 9 20 9"/>
           </svg>
-          My Inquiries
+          Meine Anfragen
         </RouterLink>
 
         <RouterLink
@@ -43,7 +43,7 @@ function handleLogout() {
             <polyline points="17 8 12 3 7 8"/>
             <line x1="12" y1="3" x2="12" y2="15"/>
           </svg>
-          Upload STEP
+          STEP hochladen
         </RouterLink>
 
         <RouterLink
@@ -58,7 +58,7 @@ function handleLogout() {
             <rect x="3" y="14" width="7" height="7" rx="1"/>
             <rect x="14" y="14" width="7" height="7" rx="1"/>
           </svg>
-          All Inquiries
+          Alle Anfragen
         </RouterLink>
       </nav>
 
@@ -67,7 +67,7 @@ function handleLogout() {
           <span class="label-sm">{{ user?.email }}</span>
           <span v-if="isAdmin" class="sidebar__badge">Admin</span>
         </div>
-        <button class="sidebar__logout" @click="handleLogout">Sign Out</button>
+        <button class="sidebar__logout" @click="handleLogout">Abmelden</button>
       </div>
     </aside>
 

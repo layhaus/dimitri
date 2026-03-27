@@ -10,11 +10,11 @@ const { inquiries, loading, loadAllInquiries } = useInquiries()
 const activeFilter = ref('all')
 const error = ref('')
 const filters = [
-  { key: 'all', label: 'All' },
-  { key: 'pending', label: 'Pending' },
-  { key: 'in_review', label: 'In Review' },
-  { key: 'reviewed', label: 'Reviewed' },
-  { key: 'rejected', label: 'Rejected' },
+  { key: 'all', label: 'Alle' },
+  { key: 'pending', label: 'Ausstehend' },
+  { key: 'in_review', label: 'In Prüfung' },
+  { key: 'reviewed', label: 'Geprüft' },
+  { key: 'rejected', label: 'Abgelehnt' },
 ]
 
 async function setFilter(key: string) {
@@ -22,7 +22,7 @@ async function setFilter(key: string) {
   try {
     await loadAllInquiries(key)
   } catch (err: unknown) {
-    error.value = (err as Error).message || 'Failed to load inquiries'
+    error.value = (err as Error).message || 'Anfragen konnten nicht geladen werden'
   }
 }
 
@@ -30,7 +30,7 @@ onMounted(async () => {
   try {
     await loadAllInquiries()
   } catch (err: unknown) {
-    error.value = (err as Error).message || 'Failed to load inquiries'
+    error.value = (err as Error).message || 'Anfragen konnten nicht geladen werden'
   }
 })
 </script>
@@ -39,10 +39,10 @@ onMounted(async () => {
   <div class="admin-view">
     <div class="admin-view__header">
       <div>
-        <h1 class="headline-lg">All Inquiries</h1>
-        <p class="body-md admin-view__subtitle">Review and manage all submissions</p>
+        <h1 class="headline-lg">Alle Anfragen</h1>
+        <p class="body-md admin-view__subtitle">Alle Einreichungen prüfen und verwalten</p>
       </div>
-      <span class="label-sm">{{ inquiries.length }} total</span>
+      <span class="label-sm">{{ inquiries.length }} gesamt</span>
     </div>
 
     <div class="admin-view__filters">
@@ -58,13 +58,13 @@ onMounted(async () => {
     </div>
 
     <div v-if="loading" class="admin-view__loading">
-      <span class="label-sm">Loading...</span>
+      <span class="label-sm">Laden...</span>
     </div>
 
     <div v-else-if="inquiries.length === 0" class="admin-view__empty">
-      <p class="title-md">No inquiries found</p>
+      <p class="title-md">Keine Anfragen gefunden</p>
       <p class="body-md" style="color: var(--on-surface-variant); margin-top: var(--space-2);">
-        {{ activeFilter === 'all' ? 'No submissions yet' : 'No inquiries with this status' }}
+        {{ activeFilter === 'all' ? 'Noch keine Einreichungen' : 'Keine Anfragen mit diesem Status' }}
       </p>
     </div>
 

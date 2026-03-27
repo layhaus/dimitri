@@ -4,10 +4,10 @@ defineProps<{
 }>()
 
 const statusLabels: Record<string, string> = {
-  pending: 'Pending',
-  in_review: 'In Review',
-  reviewed: 'Reviewed',
-  rejected: 'Rejected',
+  pending: 'Ausstehend',
+  in_review: 'In Prüfung',
+  reviewed: 'Geprüft',
+  rejected: 'Abgelehnt',
 }
 </script>
 

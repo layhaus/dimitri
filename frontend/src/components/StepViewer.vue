@@ -11,7 +11,7 @@ const props = defineProps<{
 const container = ref<HTMLDivElement>()
 const loading = ref(true)
 const error = ref('')
-const progress = ref('Initializing engine...')
+const progress = ref('Engine wird initialisiert...')
 
 let renderer: THREE.WebGLRenderer | null = null
 let scene: THREE.Scene | null = null
@@ -24,7 +24,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
   return Promise.race([
     promise,
     new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error(`${label} timed out after ${ms / 1000}s`)), ms)
+      setTimeout(() => reject(new Error(`${label}: Zeitüberschreitung nach ${ms / 1000}s`)), ms)
     ),
   ])
 }
@@ -47,7 +47,6 @@ async function loadModel(url: string) {
   error.value = ''
 
   try {
-    // Setup scene
     scene = new THREE.Scene()
     scene.background = new THREE.Color(0x12131b)
 
@@ -64,7 +63,6 @@ async function loadModel(url: string) {
     container.value.innerHTML = ''
     container.value.appendChild(renderer.domElement)
 
-    // Touch-friendly orbit controls
     controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
     controls.dampingFactor = 0.08
@@ -74,87 +72,80 @@ async function loadModel(url: string) {
       TWO: THREE.TOUCH.DOLLY_PAN,
     }
 
-    // Lighting — studio setup
     scene.add(new THREE.AmbientLight(0x404050, 1.5))
-
     const keyLight = new THREE.DirectionalLight(0xffffff, 2)
     keyLight.position.set(5, 8, 5)
     scene.add(keyLight)
-
     const fillLight = new THREE.DirectionalLight(0x8090a0, 0.8)
     fillLight.position.set(-3, 2, -3)
     scene.add(fillLight)
-
     const rimLight = new THREE.DirectionalLight(0x00E5FF, 0.3)
     rimLight.position.set(0, -5, -5)
     scene.add(rimLight)
 
-    // Grid
     const gridHelper = new THREE.GridHelper(200, 40, 0x282932, 0x1a1b23)
     scene.add(gridHelper)
 
-    // Load OCCT WASM with timeout
-    progress.value = 'Loading 3D engine...'
+    progress.value = '3D-Engine wird geladen...'
     const occt = await withTimeout(
       occtImportJs({ locateFile: () => '/occt-import-js.wasm' }),
       30000,
-      'Loading 3D engine'
+      '3D-Engine laden'
     )
 
-    // Fetch STEP file with timeout
-    progress.value = 'Downloading file...'
-    const response = await withTimeout(fetch(url), 30000, 'File download')
-    if (!response.ok) throw new Error('Failed to download file')
+    progress.value = 'Datei wird heruntergeladen...'
+    const response = await withTimeout(fetch(url), 30000, 'Datei-Download')
+    if (!response.ok) throw new Error('Datei konnte nicht heruntergeladen werden')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
-    // Parse STEP
-    progress.value = 'Parsing 3D model...'
+    progress.value = '3D-Modell wird analysiert...'
     const result = occt.ReadStepFile(buffer, null)
 
     if (!result || !result.meshes || result.meshes.length === 0) {
-      throw new Error('No geometry found in file. The file may be empty or corrupted.')
+      throw new Error('Keine Geometrie in der Datei gefunden. Die Datei ist möglicherweise leer oder beschädigt.')
     }
 
-    // Build three.js meshes
-    progress.value = 'Rendering...'
+    progress.value = 'Wird gerendert...'
     const group = new THREE.Group()
 
     for (const mesh of result.meshes) {
       if (!mesh.attributes?.position?.array) continue
 
       const geometry = new THREE.BufferGeometry()
-      geometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(mesh.attributes.position.array, 3)
-      )
+
+      // Convert to TypedArrays — occt-import-js may return plain JS arrays at runtime
+      const posArray = mesh.attributes.position.array instanceof Float32Array
+        ? mesh.attributes.position.array
+        : new Float32Array(mesh.attributes.position.array)
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(posArray, 3))
 
       if (mesh.attributes.normal) {
-        geometry.setAttribute(
-          'normal',
-          new THREE.Float32BufferAttribute(mesh.attributes.normal.array, 3)
-        )
+        const normArray = mesh.attributes.normal.array instanceof Float32Array
+          ? mesh.attributes.normal.array
+          : new Float32Array(mesh.attributes.normal.array)
+        geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normArray, 3))
       } else {
         geometry.computeVertexNormals()
       }
 
       if (mesh.index) {
-        geometry.setIndex(new THREE.BufferAttribute(mesh.index.array, 1))
+        const idxArray = mesh.index.array instanceof Uint32Array
+          ? mesh.index.array
+          : new Uint32Array(mesh.index.array)
+        geometry.setIndex(new THREE.BufferAttribute(idxArray, 1))
       }
 
       const color = mesh.color
         ? new THREE.Color(mesh.color[0], mesh.color[1], mesh.color[2])
         : new THREE.Color(0.75, 0.78, 0.82)
 
-      const material = new THREE.MeshPhysicalMaterial({
+      group.add(new THREE.Mesh(geometry, new THREE.MeshPhysicalMaterial({
         color,
         metalness: 0.2,
         roughness: 0.5,
         side: THREE.DoubleSide,
-      })
+      })))
 
-      group.add(new THREE.Mesh(geometry, material))
-
-      // Edge lines for CAD look
       const edges = new THREE.EdgesGeometry(geometry, 30)
       group.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({
         color: 0x00E5FF,
@@ -165,7 +156,6 @@ async function loadModel(url: string) {
 
     scene.add(group)
 
-    // Fit camera to model
     const box = new THREE.Box3().setFromObject(group)
     const center = box.getCenter(new THREE.Vector3())
     const size = box.getSize(new THREE.Vector3()).length()
@@ -188,7 +178,6 @@ async function loadModel(url: string) {
       gridHelper.scale.set(gridScale / 10, 1, gridScale / 10)
     }
 
-    // Render loop
     function animate() {
       animFrameId = requestAnimationFrame(animate)
       controls!.update()
@@ -199,7 +188,7 @@ async function loadModel(url: string) {
     loading.value = false
   } catch (err: unknown) {
     const e = err as Error
-    error.value = e.message || 'Failed to load 3D model'
+    error.value = e.message || '3D-Modell konnte nicht geladen werden'
     loading.value = false
   } finally {
     isLoadingModel = false
@@ -259,7 +248,7 @@ onBeforeUnmount(() => {
     </div>
     <div ref="container" class="step-viewer__canvas" />
     <div v-if="!loading && !error" class="step-viewer__controls-hint">
-      <span class="label-sm">Drag to rotate &middot; Pinch to zoom</span>
+      <span class="label-sm">Ziehen zum Drehen &middot; Pinch zum Zoomen</span>
     </div>
   </div>
 </template>

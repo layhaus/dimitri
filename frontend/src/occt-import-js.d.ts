@@ -1,10 +1,10 @@
 declare module 'occt-import-js' {
   interface OcctMesh {
     attributes: {
-      position: { array: Float32Array }
-      normal?: { array: Float32Array }
+      position: { array: ArrayLike<number> }
+      normal?: { array: ArrayLike<number> }
     }
-    index?: { array: Uint32Array }
+    index?: { array: ArrayLike<number> }
     color?: [number, number, number]
   }
 

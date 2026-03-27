@@ -27,7 +27,7 @@ onMounted(async () => {
     editStatus.value = inquiry.value.status || 'pending'
     editNotes.value = inquiry.value.notes || ''
   } catch {
-    error.value = 'Inquiry not found'
+    error.value = 'Anfrage nicht gefunden'
   } finally {
     loading.value = false
   }
@@ -43,14 +43,14 @@ async function handleSave() {
     editNotes.value = inquiry.value.notes || ''
   } catch (err: unknown) {
     const e = err as { message?: string }
-    error.value = e.message || 'Failed to save'
+    error.value = e.message || 'Speichern fehlgeschlagen'
   } finally {
     saving.value = false
   }
 }
 
 async function handleDelete() {
-  if (!inquiry.value || !confirm('Delete this inquiry?')) return
+  if (!inquiry.value || !confirm('Diese Anfrage löschen?')) return
   await deleteInquiry(inquiry.value.id)
   router.push({ name: 'inquiries' })
 }
@@ -73,11 +73,11 @@ function formatDate(dateStr: string): string {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="15 18 9 12 15 6"/>
       </svg>
-      Back
+      Zurück
     </button>
 
     <div v-if="loading" class="detail__loading">
-      <span class="label-sm">Loading...</span>
+      <span class="label-sm">Laden...</span>
     </div>
 
     <div v-else-if="error" class="detail__error body-md">{{ error }}</div>
@@ -87,7 +87,7 @@ function formatDate(dateStr: string): string {
         <div>
           <h1 class="headline-md">{{ inquiry.filename || inquiry.file }}</h1>
           <p class="label-sm" style="margin-top: var(--space-2)">
-            Submitted {{ formatDate(inquiry.created) }}
+            Eingereicht am {{ formatDate(inquiry.created) }}
             <template v-if="inquiry.expand?.user">
               &middot; {{ inquiry.expand.user.name || inquiry.expand.user.email }}
             </template>
@@ -103,7 +103,7 @@ function formatDate(dateStr: string): string {
           {{ (inquiry.filename || inquiry.file).split('.').pop()?.toUpperCase() }}
         </div>
         <div class="detail__card-body">
-          <span class="label-sm">File</span>
+          <span class="label-sm">Datei</span>
           <p class="title-md">{{ inquiry.filename || inquiry.file }}</p>
         </div>
         <a
@@ -116,19 +116,19 @@ function formatDate(dateStr: string): string {
             <polyline points="7 10 12 15 17 10"/>
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
-          Download
+          Herunterladen
         </a>
       </div>
 
       <!-- 3D Model Viewer -->
       <div class="detail__viewer-section">
-        <h2 class="title-md" style="margin-bottom: var(--space-4)">3D Preview</h2>
+        <h2 class="title-md" style="margin-bottom: var(--space-4)">3D-Vorschau</h2>
         <StepViewer :file-url="getFileUrl(inquiry)" />
       </div>
 
       <!-- Admin review section -->
       <div v-if="isAdmin" class="detail__review">
-        <h2 class="title-md" style="margin-bottom: var(--space-6)">Review</h2>
+        <h2 class="title-md" style="margin-bottom: var(--space-6)">Prüfung</h2>
 
         <div class="form-group">
           <label class="label-sm" for="status">Status</label>
@@ -137,35 +137,35 @@ function formatDate(dateStr: string): string {
             v-model="editStatus"
             class="form-select"
           >
-            <option value="pending">Pending</option>
-            <option value="in_review">In Review</option>
-            <option value="reviewed">Reviewed</option>
-            <option value="rejected">Rejected</option>
+            <option value="pending">Ausstehend</option>
+            <option value="in_review">In Prüfung</option>
+            <option value="reviewed">Geprüft</option>
+            <option value="rejected">Abgelehnt</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label class="label-sm" for="notes">Notes</label>
+          <label class="label-sm" for="notes">Anmerkungen</label>
           <textarea
             id="notes"
             v-model="editNotes"
             class="form-textarea"
             rows="4"
-            placeholder="Add review notes..."
+            placeholder="Anmerkungen hinzufügen..."
           ></textarea>
         </div>
 
         <div class="detail__actions">
           <button class="btn-save" :disabled="saving" @click="handleSave">
-            {{ saving ? 'Saving...' : 'Save Changes' }}
+            {{ saving ? 'Wird gespeichert...' : 'Änderungen speichern' }}
           </button>
-          <button class="btn-delete" @click="handleDelete">Delete</button>
+          <button class="btn-delete" @click="handleDelete">Löschen</button>
         </div>
       </div>
 
       <!-- Notes display for non-admin -->
       <div v-else-if="inquiry.notes" class="detail__notes">
-        <span class="label-sm">Review Notes</span>
+        <span class="label-sm">Prüfungsanmerkungen</span>
         <p class="body-md" style="margin-top: var(--space-2)">{{ inquiry.notes }}</p>
       </div>
     </template>

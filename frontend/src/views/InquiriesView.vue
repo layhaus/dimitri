@@ -12,7 +12,7 @@ onMounted(async () => {
   try {
     await loadMyInquiries()
   } catch (err: unknown) {
-    error.value = (err as Error).message || 'Failed to load inquiries'
+    error.value = (err as Error).message || 'Anfragen konnten nicht geladen werden'
   }
 })
 </script>
@@ -21,22 +21,22 @@ onMounted(async () => {
   <div class="inquiries-view">
     <div class="inquiries-view__header">
       <div>
-        <h1 class="headline-lg">My Inquiries</h1>
-        <p class="body-md inquiries-view__subtitle">Your uploaded STEP files</p>
+        <h1 class="headline-lg">Meine Anfragen</h1>
+        <p class="body-md inquiries-view__subtitle">Deine hochgeladenen STEP-Dateien</p>
       </div>
       <RouterLink to="/new" class="btn-upload">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/>
           <line x1="5" y1="12" x2="19" y2="12"/>
         </svg>
-        Upload STEP
+        STEP hochladen
       </RouterLink>
     </div>
 
     <div v-if="error" class="inquiries-view__error body-md">{{ error }}</div>
 
     <div v-else-if="loading" class="inquiries-view__loading">
-      <span class="label-sm">Loading inquiries...</span>
+      <span class="label-sm">Anfragen werden geladen...</span>
     </div>
 
     <div v-else-if="inquiries.length === 0" class="inquiries-view__empty">
@@ -44,8 +44,8 @@ onMounted(async () => {
         <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
         <polyline points="13 2 13 9 20 9"/>
       </svg>
-      <p class="title-md">No inquiries yet</p>
-      <p class="body-md" style="color: var(--on-surface-variant);">Upload a STEP file to create your first inquiry</p>
+      <p class="title-md">Noch keine Anfragen</p>
+      <p class="body-md" style="color: var(--on-surface-variant);">Lade eine STEP-Datei hoch, um deine erste Anfrage zu erstellen</p>
     </div>
 
     <div v-else class="inquiries-view__list">

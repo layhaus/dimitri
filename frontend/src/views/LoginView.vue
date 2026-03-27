@@ -22,7 +22,7 @@ async function handleSubmit() {
   try {
     if (mode.value === 'register') {
       if (password.value !== confirmPassword.value) {
-        error.value = 'Passwords do not match'
+        error.value = 'Passwörter stimmen nicht überein'
         return
       }
       await register(name.value, email.value, password.value)
@@ -36,7 +36,7 @@ async function handleSubmit() {
     if (e.response?.data) {
       error.value = Object.values(e.response.data).map(v => v.message).join('. ')
     } else {
-      error.value = e.message || 'Authentication failed'
+      error.value = e.message || 'Anmeldung fehlgeschlagen'
     }
   } finally {
     loading.value = false
@@ -49,7 +49,7 @@ async function handleSubmit() {
     <div class="login__header">
       <div class="login__logo">D</div>
       <h1 class="headline-lg">Dimitri</h1>
-      <p class="login__subtitle body-md">Manufacturing inquiry platform</p>
+      <p class="login__subtitle body-md">Plattform für Fertigungsanfragen</p>
     </div>
 
     <div class="login__card">
@@ -59,14 +59,14 @@ async function handleSubmit() {
           :class="{ 'login__tab--active': mode === 'login' }"
           @click="mode = 'login'; error = ''"
         >
-          Sign In
+          Anmelden
         </button>
         <button
           class="login__tab"
           :class="{ 'login__tab--active': mode === 'register' }"
           @click="mode = 'register'; error = ''"
         >
-          Create Account
+          Konto erstellen
         </button>
       </div>
 
@@ -74,38 +74,38 @@ async function handleSubmit() {
 
       <form @submit.prevent="handleSubmit">
         <div v-if="mode === 'register'" class="form-group">
-          <label class="label-sm" for="name">Full Name</label>
+          <label class="label-sm" for="name">Vollständiger Name</label>
           <input
             id="name"
             v-model="name"
             type="text"
             class="form-input"
-            placeholder="Your name"
+            placeholder="Dein Name"
             autocomplete="name"
           />
         </div>
 
         <div class="form-group">
-          <label class="label-sm" for="email">Email</label>
+          <label class="label-sm" for="email">E-Mail</label>
           <input
             id="email"
             v-model="email"
             type="email"
             class="form-input"
-            placeholder="you@company.com"
+            placeholder="du@firma.de"
             required
             autocomplete="email"
           />
         </div>
 
         <div class="form-group">
-          <label class="label-sm" for="password">Password</label>
+          <label class="label-sm" for="password">Passwort</label>
           <input
             id="password"
             v-model="password"
             type="password"
             class="form-input"
-            placeholder="Enter password"
+            placeholder="Passwort eingeben"
             required
             minlength="8"
             :autocomplete="mode === 'register' ? 'new-password' : 'current-password'"
@@ -113,13 +113,13 @@ async function handleSubmit() {
         </div>
 
         <div v-if="mode === 'register'" class="form-group">
-          <label class="label-sm" for="confirm">Confirm Password</label>
+          <label class="label-sm" for="confirm">Passwort bestätigen</label>
           <input
             id="confirm"
             v-model="confirmPassword"
             type="password"
             class="form-input"
-            placeholder="Confirm password"
+            placeholder="Passwort bestätigen"
             required
             autocomplete="new-password"
           />
@@ -127,7 +127,7 @@ async function handleSubmit() {
 
         <button class="btn-primary" type="submit" :disabled="loading">
           <span v-if="loading" class="spinner"></span>
-          {{ mode === 'login' ? 'Sign In' : 'Create Account' }}
+          {{ mode === 'login' ? 'Anmelden' : 'Konto erstellen' }}
         </button>
       </form>
     </div>
